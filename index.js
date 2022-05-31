@@ -1,22 +1,30 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-const port = 8080;
+import dotenv from "dotenv";
+import AuthRoute from "./Routes/AuthRoute.js";
 
+//Routes
 const app = express();
 
+//Middlewares
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
-app.get('/', (req, res, next) => {
-    res.send('Duy loves Tzuyu')
-})
+dotenv.config();
 
 mongoose
-  .connect(
-    "mongodb+srv://nqduy99:bookingappletgo!@cluster0.dqdrs.mongodb.net/SocialMedia?retryWrites=true&w=majority", 
-    {useNewUrlParser: true, useUnifiedTopology: true}
-  )
+  .connect(process.env.MONGO_DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() =>
-    app.listen(port, () => console.log(`Server is running at port ${port}`))
-  );
+    app.listen(process.env.PORT, () =>
+      console.log(`Server is running at port ${process.env.PORT}`)
+    )
+  )
+  .catch((error) => console.log(error));
+
+// usage of routes
+
+app.use("/auth", AuthRoute);
